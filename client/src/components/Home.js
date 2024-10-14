@@ -39,7 +39,7 @@ const Home = () => {
       <div className="formWrapper">
         <img align = "center"
           className="homePageLogo"
-          src="/images/CFN1.png"
+          src="client/public/images/CFN1.PNG"
           alt="code-flow-nexus"
           style={{ maxWidth: "800px"
                    , marginLeft:"15px", marginRight: "auto" 
