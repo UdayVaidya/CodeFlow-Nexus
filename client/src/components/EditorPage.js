@@ -196,7 +196,7 @@ const EditorPage = () => {
       <div className="asideWrap">
         <div className="asideInner">
           <div className="logo">
-            <img className="logoImage" src="/images/CFN.PNG" alt="code-flow-nexus" style={{ maxWidth: "175px", marginTop: "-3px" }} />
+            <img className="logoImage" src="/images/code.png" alt="code-flow-nexus" style={{ maxWidth: "175px", marginTop: "-3px" }} />
           </div>
           <h3>Connected users</h3>
           <div className="clientsList">
