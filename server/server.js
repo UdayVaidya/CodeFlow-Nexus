@@ -8,6 +8,11 @@ const ACTIONS = require("./Actions");
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Health check endpoint - must be before catch-all route
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", message: "Server is healthy" });
+});
+
 app.use(express.static("build"));
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
