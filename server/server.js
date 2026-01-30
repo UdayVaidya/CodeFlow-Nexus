@@ -6,7 +6,13 @@ const { Server } = require("socket.io");
 const ACTIONS = require("./Actions");
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow all origins for development. In production, specify your Vercel domain
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 
 // Health check endpoint - must be before catch-all route
 app.get("/health", (req, res) => {
