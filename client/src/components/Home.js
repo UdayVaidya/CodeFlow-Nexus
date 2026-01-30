@@ -37,13 +37,10 @@ const Home = () => {
   return (
     <div className="homePageWrapper">
       <div className="formWrapper">
-        <img align = "center"
+        <img
           className="homePageLogo"
-          src="/images/code1.png"
+          src="/images/Logo.svg"
           alt="code-flow-nexus"
-          style={{ maxWidth: "800px"
-                   , marginLeft:"15px", marginRight: "auto" 
-                }}
         />
         <h4 className="mainLabel" align="center">Paste invitation ROOM ID</h4>
         <div className="inputGroup">

@@ -8,4 +8,4 @@ const ACTIONS = {
   SEND_MESSAGE: "send-message",
 };
 
-module.exports = ACTIONS;
+export default ACTIONS;

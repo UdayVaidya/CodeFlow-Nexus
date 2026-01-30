@@ -22,6 +22,11 @@ const EditorPage = () => {
 
   useEffect(() => {
     const init = async () => {
+      // Prevent duplicate socket connections in React 18 Strict Mode
+      if (socketRef.current) {
+        return;
+      }
+
       socketRef.current = await initSocket();
 
       socketRef.current.on("connect_error", (err) => handleErrors(err));
@@ -65,18 +70,19 @@ const EditorPage = () => {
       //Listening for message
       socketRef.current.on(ACTIONS.SEND_MESSAGE, ({ message }) => {
         const chatWindow = document.getElementById("chatWindow");
-        var currText = chatWindow.value;
-        currText += message;
-        chatWindow.value = currText;
+        chatWindow.innerHTML += message;
         chatWindow.scrollTop = chatWindow.scrollHeight;
       });
     };
     init();
     return () => {
-      socketRef.current.off(ACTIONS.JOINED);
-      socketRef.current.off(ACTIONS.DISCONNECTED);
-      socketRef.current.off(ACTIONS.SEND_MESSAGE);
-      socketRef.current.disconnect();
+      if (socketRef.current) {
+        socketRef.current.off(ACTIONS.JOINED);
+        socketRef.current.off(ACTIONS.DISCONNECTED);
+        socketRef.current.off(ACTIONS.SEND_MESSAGE);
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
   }, []);
 
@@ -173,13 +179,24 @@ const EditorPage = () => {
 
   const sendMessage = () => {
     if (document.getElementById("inputBox").value === "") return;
-    var message = `> ${location.state.username}:\n${
-      document.getElementById("inputBox").value
-    }\n`;
+    const messageText = document.getElementById("inputBox").value;
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+    const message = `
+      <div class="chat-message">
+        <div class="message-header">
+          <span class="message-username">${location.state.username}</span>
+          <span class="message-time">${timeString}</span>
+        </div>
+        <div class="message-content">${messageText}</div>
+      </div>
+    `;
     const chatWindow = document.getElementById("chatWindow");
-    var currText = chatWindow.value;
-    currText += message;
-    chatWindow.value = currText;
+    chatWindow.innerHTML += message;
     chatWindow.scrollTop = chatWindow.scrollHeight;
     document.getElementById("inputBox").value = "";
     socketRef.current.emit(ACTIONS.SEND_MESSAGE, { roomId, message });
@@ -196,7 +213,7 @@ const EditorPage = () => {
       <div className="asideWrap">
         <div className="asideInner">
           <div className="logo">
-            <img className="logoImage" src="/images/code.png" alt="code-flow-nexus" style={{ maxWidth: "175px", marginTop: "-3px" }} />
+            <img className="logoImage" src="/images/Logo.svg" alt="code-flow-nexus"  />
           </div>
           <h3>Connected users</h3>
           <div className="clientsList">
@@ -207,11 +224,11 @@ const EditorPage = () => {
         </div>
         <label>
           Select Language:
-          <select id="languageOptions" className="seLang" defaultValue="5">
+          <select id="languageOptions" className="seLang" defaultValue="17">
+            <option value="17">Javascript</option>
             <option value="5">Python</option>
             <option value="6">C (gcc)</option>
             <option value="7">C++ (gcc)</option>
-            <option value="17">Javascript</option>
           </select>
         </label>
         <button className="btn runBtn" onClick={runCode}>
@@ -257,12 +274,10 @@ const EditorPage = () => {
       </div>
 
       <div className="chatWrap">
-        <textarea
+        <div
           id="chatWindow"
-          className="chatArea textarea-style"
-          placeholder="Chat messages will appear here"
-          disabled
-        ></textarea>
+          className="chatArea"
+        ></div>
         <div className="sendChatWrap">
           <input
             id="inputBox"
